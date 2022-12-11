@@ -1,23 +1,23 @@
-version: "3.4"
-
+vversion: '3.3'
 services:
-  mysql-containerFinal1:
-    container_name: mysql-containerFinal1
-    ports:
-      - '3306:3306'
+  mysqldb:
+    image: 'mysql:5.7'
     environment:
-      - MYSQL_DATABASE=1
-      - MYSQL_ALLOW_EMPTY_PASSWORD=1
-    restart: always
-    volumes:
-      - mysql-containerFinal1:/var/lib/mysql:rw
-    image: 'mysql:latest'
-  projetspring:
-    depends_on:
-      - mysql-containerFinal1
-    container_name: projetspring
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=tpachato
     ports:
-      - '8089:8089'
-    image: abdelmomen/projetspring:2.2.4
-volumes:
-  mysql-containerFinal1: { }
+      - "3307:3306"
+  springboot-docker-container:
+    image: abdelmomen/projetspring
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/tpachato?autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "root"
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    depends_on:
+      - mysqldb
